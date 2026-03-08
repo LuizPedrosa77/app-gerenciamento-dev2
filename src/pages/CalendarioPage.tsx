@@ -5,13 +5,14 @@ import {
   sumPnl, fmtNum, signedPnl, getWinRate, getTradePnl, uid, Trade,
 } from '@/lib/gpfx-utils';
 import {
-  ChevronLeft, ChevronRight, Plus, Calendar,
+  ChevronLeft, ChevronRight, Plus, Calendar, Camera,
 } from 'lucide-react';
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,
   CartesianGrid, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
 } from 'recharts';
 import { Lightbox } from '@/components/Lightbox';
+import { ScreenshotModal } from '@/components/ScreenshotModal';
 
 /* ── Modal ── */
 function Modal({ open, onClose, title, children, footer }: {
@@ -109,7 +110,7 @@ interface CalendarioPageProps {
 }
 
 export default function CalendarioPage({ onNavigateView }: CalendarioPageProps) {
-  const { state, activeAcc, addTrade, setState, save } = useGPFX();
+  const { state, activeAcc, addTrade, setState, save, updateTrade } = useGPFX();
   const acc = activeAcc;
   const now = new Date();
 
@@ -123,6 +124,7 @@ export default function CalendarioPage({ onNavigateView }: CalendarioPageProps) 
   });
   const [noteTimer, setNoteTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [lightbox, setLightbox] = useState<{ open: boolean; images: { data: string; caption: string; tradePair?: string }[]; index: number }>({ open: false, images: [], index: 0 });
+  const [screenshotModal, setScreenshotModal] = useState<{ open: boolean; trade: Trade | null }>({ open: false, trade: null });
 
   // Review day: default to yesterday
   const [reviewDate, setReviewDate] = useState(() => {
@@ -569,7 +571,14 @@ export default function CalendarioPage({ onNavigateView }: CalendarioPageProps) 
                               }}
                             />
                           ) : (
-                            <span className="text-[10px]" style={{ color: 'var(--gpfx-text-muted)' }}>—</span>
+                            <button
+                              className="flex items-center justify-center w-12 h-12 rounded transition-colors hover:bg-[rgba(0,211,149,0.1)]"
+                              style={{ border: '1px dashed rgba(0,211,149,0.3)' }}
+                              onClick={() => setScreenshotModal({ open: true, trade: t })}
+                              title="Adicionar screenshot"
+                            >
+                              <Camera size={16} style={{ color: '#6e7681' }} />
+                            </button>
                           )}
                         </td>
                         <td className="px-3 py-2 font-bold" style={{ color: 'var(--gpfx-text-primary)' }}>{t.pair}</td>
@@ -643,7 +652,7 @@ export default function CalendarioPage({ onNavigateView }: CalendarioPageProps) 
             }}>
               <div className="flex items-center gap-3">
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ color: 'var(--gpfx-text-muted)', background: 'var(--gpfx-border)' }}>#{i + 1}</span>
-                {t.screenshot && (
+                {t.screenshot ? (
                   <img
                     src={t.screenshot.data}
                     alt="Screenshot"
@@ -655,6 +664,15 @@ export default function CalendarioPage({ onNavigateView }: CalendarioPageProps) 
                       setLightbox({ open: true, images: imgs, index: Math.max(0, idx) });
                     }}
                   />
+                ) : (
+                  <button
+                    className="flex items-center justify-center w-10 h-10 rounded transition-colors hover:bg-[rgba(0,211,149,0.1)]"
+                    style={{ border: '1px dashed rgba(0,211,149,0.3)' }}
+                    onClick={() => setScreenshotModal({ open: true, trade: t })}
+                    title="Adicionar screenshot"
+                  >
+                    <Camera size={16} style={{ color: '#6e7681' }} />
+                  </button>
                 )}
                 <span className="text-xs font-bold" style={{ color: 'var(--gpfx-text-primary)' }}>{t.pair}</span>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{
@@ -681,6 +699,14 @@ export default function CalendarioPage({ onNavigateView }: CalendarioPageProps) 
 
       {/* Lightbox */}
       <Lightbox open={lightbox.open} onClose={() => setLightbox({ ...lightbox, open: false })} images={lightbox.images} initialIndex={lightbox.index} />
+
+      {/* Screenshot Modal */}
+      <ScreenshotModal
+        open={screenshotModal.open}
+        onClose={() => setScreenshotModal({ open: false, trade: null })}
+        trade={screenshotModal.trade}
+        onSave={(tradeId, screenshot) => updateTrade(tradeId, 'screenshot', screenshot)}
+      />
     </div>
   );
 }
