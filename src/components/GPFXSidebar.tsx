@@ -6,7 +6,6 @@ import {
   CandlestickChart, CheckCircle, CalendarDays, Bot, Plug
 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
-import { ActiveAccountCard } from './ActiveAccountCard';
 import { useGPFX } from '@/contexts/GPFXContext';
 import {
   Tooltip,
