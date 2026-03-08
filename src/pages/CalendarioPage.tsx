@@ -625,6 +625,19 @@ export default function CalendarioPage({ onNavigateView }: CalendarioPageProps) 
             }}>
               <div className="flex items-center gap-3">
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ color: 'var(--gpfx-text-muted)', background: 'var(--gpfx-border)' }}>#{i + 1}</span>
+                {t.screenshot && (
+                  <img
+                    src={t.screenshot.data}
+                    alt="Screenshot"
+                    className="w-10 h-10 rounded object-cover cursor-pointer border"
+                    style={{ borderColor: '#00d395' }}
+                    onClick={() => {
+                      const imgs = dayModalTrades.filter(tr => tr.screenshot).map(tr => ({ data: tr.screenshot!.data, caption: tr.screenshot!.caption, tradePair: tr.pair }));
+                      const idx = imgs.findIndex(im => im.data === t.screenshot!.data);
+                      setLightbox({ open: true, images: imgs, index: Math.max(0, idx) });
+                    }}
+                  />
+                )}
                 <span className="text-xs font-bold" style={{ color: 'var(--gpfx-text-primary)' }}>{t.pair}</span>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{
                   color: t.dir === 'BUY' ? '#00d395' : '#ff4d4d',
