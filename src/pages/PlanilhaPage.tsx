@@ -288,13 +288,7 @@ export default function PlanilhaPage() {
 
   return (
     <div className="page-fade-in flex flex-col gap-5 max-w-[1400px] mx-auto p-6">
-      {/* Account Filter + Tabs */}
-      <div className="flex items-center gap-3 mb-1 flex-wrap">
-        <select className="gpfx-select text-xs font-semibold" style={{ minWidth: 200 }} value={String(state.activeAccount)}
-          onChange={e => switchAccount(parseInt(e.target.value))}>
-          {state.accounts.map((a, i) => <option key={i} value={String(i)}>{a.name}</option>)}
-        </select>
-      </div>
+      {/* Account Tabs */}
       <div className="flex items-center gap-1 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
         {state.accounts.map((a, i) => (
           <button
