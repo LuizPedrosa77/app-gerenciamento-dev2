@@ -570,7 +570,7 @@ export default function PlanilhaPage() {
                   {/* Table Header */}
                   <div className="grid items-center px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider"
                     style={{
-                      gridTemplateColumns: '28px 36px 1fr 70px 70px 100px 36px 32px 32px',
+                      gridTemplateColumns: '28px 36px 1fr 70px 70px 100px 36px 56px 32px 32px',
                       background: '#0d1117',
                       color: '#6e7681',
                       borderBottom: '1px solid #21262d'
@@ -582,6 +582,7 @@ export default function PlanilhaPage() {
                     <span>Result.</span>
                     <span className="text-right">P&L</span>
                     <span className="text-center">VM</span>
+                    <span className="text-center">📸</span>
                     <span></span>
                     <span></span>
                   </div>
