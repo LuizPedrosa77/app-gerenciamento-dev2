@@ -645,7 +645,7 @@ export default function CalendarioPage({ onNavigateView }: CalendarioPageProps) 
             }}>
               <div className="flex items-center gap-3">
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ color: 'var(--gpfx-text-muted)', background: 'var(--gpfx-border)' }}>#{i + 1}</span>
-                {t.screenshot && (
+                {t.screenshot ? (
                   <img
                     src={t.screenshot.data}
                     alt="Screenshot"
@@ -657,6 +657,15 @@ export default function CalendarioPage({ onNavigateView }: CalendarioPageProps) 
                       setLightbox({ open: true, images: imgs, index: Math.max(0, idx) });
                     }}
                   />
+                ) : (
+                  <button
+                    className="flex items-center justify-center w-10 h-10 rounded transition-colors hover:bg-[rgba(0,211,149,0.1)]"
+                    style={{ border: '1px dashed rgba(0,211,149,0.3)' }}
+                    onClick={() => setScreenshotModal({ open: true, trade: t })}
+                    title="Adicionar screenshot"
+                  >
+                    <Camera size={16} style={{ color: '#6e7681' }} />
+                  </button>
                 )}
                 <span className="text-xs font-bold" style={{ color: 'var(--gpfx-text-primary)' }}>{t.pair}</span>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{
