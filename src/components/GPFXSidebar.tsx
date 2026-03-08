@@ -203,11 +203,6 @@ export function AppSidebar({ activeView, onChangeView, mobileOpen, onToggleMobil
           })}
         </nav>
 
-        {/* Active account card */}
-        <div className={`transition-all duration-300 ${effectiveCollapsed ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
-          <ActiveAccountCard />
-        </div>
-
         {/* Footer separator */}
         <div className="sidebar-separator mx-3" />
 
