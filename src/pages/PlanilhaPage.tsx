@@ -541,7 +541,7 @@ export default function PlanilhaPage() {
                         const newDate = e.target.value;
                         if (!newDate || date === newDate) return;
                         const d = new Date(newDate + 'T12:00:00');
-                        useGPFXCtx.setState(prev => {
+                        setState(prev => {
                           const accounts = [...prev.accounts];
                           const accCopy = { ...accounts[prev.activeAccount], trades: accounts[prev.activeAccount].trades.map(t => ({ ...t })) };
                           accCopy.trades.forEach(t => {
