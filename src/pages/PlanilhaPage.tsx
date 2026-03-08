@@ -58,6 +58,13 @@ export default function PlanilhaPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleteModal, setBulkDeleteModal] = useState(false);
 
+  // Screenshot state
+  const [screenshotModal, setScreenshotModal] = useState<{ open: boolean; trade: Trade | null }>({ open: false, trade: null });
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const [screenshotCaption, setScreenshotCaption] = useState('');
+  const [lightbox, setLightbox] = useState<{ open: boolean; images: { data: string; caption: string; tradePair?: string }[]; index: number }>({ open: false, images: [], index: 0 });
+  const screenshotInputRef = useRef<HTMLInputElement>(null);
+
   const year = state.activeYear;
   const month = state.activeMonth;
   const acc = activeAcc;
