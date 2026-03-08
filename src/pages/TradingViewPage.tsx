@@ -394,6 +394,7 @@ export default function TradingViewPage() {
                     <th className="text-left px-4 py-2 font-bold" style={{ color: '#6e7681' }}>Direção</th>
                     <th className="text-left px-4 py-2 font-bold" style={{ color: '#6e7681' }}>Lots</th>
                     <th className="text-left px-4 py-2 font-bold" style={{ color: '#6e7681' }}>Resultado</th>
+                    <th className="text-center px-4 py-2 font-bold" style={{ color: '#6e7681' }}>📸</th>
                     <th className="text-right px-4 py-2 font-bold" style={{ color: '#6e7681' }}>P&L</th>
                   </tr>
                 </thead>
@@ -417,6 +418,29 @@ export default function TradingViewPage() {
                         <td className="px-4 py-2">
                           <span className="text-[10px] font-bold" style={{ color: t.result === 'WIN' ? '#00d395' : '#ff4d4d' }}>{t.result}</span>
                         </td>
+                        <td className="px-4 py-2 text-center">
+                          {t.screenshot ? (
+                            <img
+                              src={t.screenshot.data}
+                              alt="Screenshot"
+                              className="w-8 h-8 rounded object-cover cursor-pointer border inline-block"
+                              style={{ borderColor: '#00d395' }}
+                              onClick={() => {
+                                const imgs = filteredPairTrades.filter(tr => tr.screenshot).map(tr => ({ data: tr.screenshot!.data, caption: tr.screenshot!.caption, tradePair: tr.pair }));
+                                const idx = imgs.findIndex(im => im.data === t.screenshot!.data);
+                                setLightbox({ open: true, images: imgs, index: Math.max(0, idx) });
+                              }}
+                            />
+                          ) : (
+                            <button
+                              className="inline-flex items-center justify-center w-7 h-7 rounded transition-colors hover:bg-[rgba(0,211,149,0.1)]"
+                              onClick={() => setScreenshotModal({ open: true, trade: t })}
+                              title="Adicionar screenshot"
+                            >
+                              <Camera size={14} style={{ color: '#6e7681' }} />
+                            </button>
+                          )}
+                        </td>
                         <td className="px-4 py-2 text-right font-extrabold" style={{ color: pnl >= 0 ? '#00d395' : '#ff4d4d' }}>
                           {pnl >= 0 ? '+' : ''}${fmtNum(pnl)}
                         </td>
@@ -424,7 +448,7 @@ export default function TradingViewPage() {
                     );
                   })}
                   {filteredPairTrades.length === 0 && (
-                    <tr><td colSpan={isAllAssets ? 6 : 5} className="px-4 py-6 text-center" style={{ color: '#6e7681' }}>
+                    <tr><td colSpan={isAllAssets ? 7 : 6} className="px-4 py-6 text-center" style={{ color: '#6e7681' }}>
                       Nenhum trade registrado{isAllAssets ? '' : ` neste par`}.
                     </td></tr>
                   )}
