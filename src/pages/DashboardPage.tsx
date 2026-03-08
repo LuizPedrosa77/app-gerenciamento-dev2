@@ -49,9 +49,13 @@ function KpiCard({ label, value, color, sparkData, variation }: {
 export default function DashboardPage() {
   const { state } = useGPFX();
   const [accFilter, setAccFilter] = useState<string>('all');
+  const [dateRange, setDateRange] = useState<DateRange>({ start: null, end: null });
 
   const stats = useMemo(() => {
     const accounts = accFilter === 'all' ? state.accounts : [state.accounts[parseInt(accFilter)]];
+    let allTradesRaw: Trade[] = [];
+    accounts.forEach(acc => allTradesRaw.push(...acc.trades));
+    const allTrades = filterTradesByRange(allTradesRaw, dateRange);
     let totalBalance = 0;
     let totalPnl = 0;
     let totalTrades = 0;
