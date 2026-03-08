@@ -3,7 +3,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import {
   LayoutDashboard, TrendingUp, ClipboardList, BarChart3, Wallet,
   Menu, X, Check, Moon, Sun, LineChart, ChevronLeft, ChevronRight,
-  CandlestickChart, CheckCircle, CalendarDays
+  CandlestickChart, CheckCircle, CalendarDays, Bot, Plug
 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { ActiveAccountCard } from './ActiveAccountCard';
