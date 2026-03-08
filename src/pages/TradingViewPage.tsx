@@ -2,8 +2,10 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useGPFX } from '@/contexts/GPFXContext';
 import { Trade, getTradePnl, fmtNum, sumPnl, getWinRate } from '@/lib/gpfx-utils';
-import { ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, Camera } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { Lightbox } from '@/components/Lightbox';
+import { ScreenshotModal } from '@/components/ScreenshotModal';
 
 const SYMBOLS = [
   { value: '__ALL__', label: '📊 Todos os ativos', pair: '__ALL__' },
