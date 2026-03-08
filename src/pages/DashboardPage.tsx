@@ -8,6 +8,7 @@ import {
   PieChart, Pie, Cell, AreaChart, Area, ReferenceLine, LabelList,
 } from 'recharts';
 import { AccountSelector, DateRangeFilter, DateRange, filterTradesByRange } from '@/components/GPFXFilters';
+import WeeklyReport from '@/components/WeeklyReport';
 
 /* ── Mini Sparkline for KPI cards ── */
 function MiniSparkline({ data, color }: { data: number[]; color: string }) {
