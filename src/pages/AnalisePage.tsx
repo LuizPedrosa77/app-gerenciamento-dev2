@@ -47,7 +47,7 @@ function Section({ title, children, fullWidth }: { title: string; children: Reac
 export default function AnalisePage() {
   const { state } = useGPFX();
   const [accFilter, setAccFilter] = useState<string>('all');
-  const [periodFilter, setPeriodFilter] = useState<string>('all');
+  const [dateRange, setDateRange] = useState<DateRange>({ start: null, end: null });
 
   const filteredTrades = useMemo(() => {
     let trades: Trade[] = [];
@@ -57,20 +57,8 @@ export default function AnalisePage() {
       const idx = parseInt(accFilter);
       if (state.accounts[idx]) trades = [...state.accounts[idx].trades];
     }
-
-    const now = new Date();
-    if (periodFilter === 'week') {
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay() + 1);
-      const sw = startOfWeek.toISOString().split('T')[0];
-      trades = trades.filter(t => t.date && t.date >= sw);
-    } else if (periodFilter === 'month') {
-      trades = trades.filter(t => t.year === now.getFullYear() && t.month === now.getMonth());
-    } else if (periodFilter === 'year') {
-      trades = trades.filter(t => t.year === now.getFullYear());
-    }
-    return trades;
-  }, [state, accFilter, periodFilter]);
+    return filterTradesByRange(trades, dateRange);
+  }, [state, accFilter, dateRange]);
 
   const analytics = useMemo(() => {
     const trades = filteredTrades;
