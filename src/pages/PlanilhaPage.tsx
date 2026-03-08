@@ -550,7 +550,7 @@ export default function PlanilhaPage() {
                           accounts[prev.activeAccount] = accCopy;
                           return { ...prev, accounts, activeYear: d.getFullYear(), activeMonth: d.getMonth() };
                         });
-                        useGPFXCtx.save();
+                        save();
                       }} />
                     <span className="text-sm font-bold capitalize" style={{ color: '#e6edf3' }}>{fmtDate}</span>
                     <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ color: '#8b949e', background: '#21262d' }}>{dayTrades.length} trade{dayTrades.length !== 1 ? 's' : ''}</span>
