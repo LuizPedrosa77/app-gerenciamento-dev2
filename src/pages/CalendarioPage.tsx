@@ -5,13 +5,14 @@ import {
   sumPnl, fmtNum, signedPnl, getWinRate, getTradePnl, uid, Trade,
 } from '@/lib/gpfx-utils';
 import {
-  ChevronLeft, ChevronRight, Plus, Calendar,
+  ChevronLeft, ChevronRight, Plus, Calendar, Camera,
 } from 'lucide-react';
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,
   CartesianGrid, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
 } from 'recharts';
 import { Lightbox } from '@/components/Lightbox';
+import { ScreenshotModal } from '@/components/ScreenshotModal';
 
 /* ── Modal ── */
 function Modal({ open, onClose, title, children, footer }: {
