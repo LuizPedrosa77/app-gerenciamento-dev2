@@ -197,17 +197,9 @@ export default function AnalisePage() {
       {/* FILTROS */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="text-xl font-extrabold" style={{ color: 'var(--gpfx-text-primary)' }}>🔍 Análise Comparativa</h1>
-        <div className="flex items-center gap-2">
-          <select className="gpfx-select text-xs" value={accFilter} onChange={e => setAccFilter(e.target.value)}>
-            <option value="all">Todas as contas</option>
-            {state.accounts.map((a, i) => <option key={i} value={i}>{a.name}</option>)}
-          </select>
-          <select className="gpfx-select text-xs" value={periodFilter} onChange={e => setPeriodFilter(e.target.value)}>
-            <option value="week">Semana atual</option>
-            <option value="month">Mês atual</option>
-            <option value="year">Ano atual</option>
-            <option value="all">Todo o histórico</option>
-          </select>
+        <div className="flex items-center gap-2 flex-wrap">
+          <AccountSelector value={accFilter} onChange={setAccFilter} accounts={state.accounts} />
+          <DateRangeFilter value={dateRange} onChange={setDateRange} />
         </div>
       </div>
 

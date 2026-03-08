@@ -121,18 +121,19 @@ export default function EvolucaoPage() {
           <h1 className="text-xl font-extrabold" style={{ color: 'var(--gpfx-text-primary)' }}>📈 Evolução da Conta</h1>
           <span className="text-xs px-3 py-1 rounded-full" style={{ color: 'var(--gpfx-text-secondary)', background: 'rgba(0,0,0,0.07)' }}>{accName}</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <div className="flex rounded-lg overflow-hidden" style={{ background: 'var(--gpfx-input-bg)', border: '1px solid var(--gpfx-border)' }}>
             <button onClick={() => setTab('overview')} className="px-4 py-1.5 text-xs font-bold"
               style={{ background: tab === 'overview' ? '#00d395' : 'transparent', color: tab === 'overview' ? '#fff' : 'var(--gpfx-text-muted)' }}>Visão Geral</button>
             <button onClick={() => setTab('monthly')} className="px-4 py-1.5 text-xs font-bold"
               style={{ background: tab === 'monthly' ? '#00d395' : 'transparent', color: tab === 'monthly' ? '#fff' : 'var(--gpfx-text-muted)' }}>Detalhe Mensal</button>
           </div>
-          <AccountFilter value={accFilter} onChange={setAccFilter} accounts={state.accounts} />
+          <AccountSelector value={accFilter} onChange={setAccFilter} accounts={state.accounts} />
           <select value={yearFilter} onChange={e => setYearFilter(e.target.value)} className="gpfx-select text-xs font-semibold">
             <option value="all">Todos os anos</option>
             {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
           </select>
+          <DateRangeFilter value={dateRange} onChange={setDateRange} />
         </div>
       </div>
 
