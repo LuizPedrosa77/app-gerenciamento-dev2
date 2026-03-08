@@ -4,9 +4,10 @@ import {
   MONTHS, YEARS, PAIRS, DIRECTIONS, RESULTS,
   sumPnl, fmtNum, signedPnl, uid, Trade,
 } from '@/lib/gpfx-utils';
-import { Download, Upload, Pencil, X, RefreshCw, AlertTriangle, Camera, Trash2, ImageIcon } from 'lucide-react';
+import { Download, Upload, Pencil, X, RefreshCw, AlertTriangle, Camera } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Lightbox } from '@/components/Lightbox';
+import { ScreenshotModal } from '@/components/ScreenshotModal';
 
 /* ── Modal component ── */
 function Modal({ open, onClose, title, children, footer }: {
