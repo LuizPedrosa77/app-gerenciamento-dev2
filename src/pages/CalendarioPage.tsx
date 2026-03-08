@@ -678,6 +678,9 @@ export default function CalendarioPage({ onNavigateView }: CalendarioPageProps) 
 
       {/* Add Trade Modal */}
       <AddTradeModal open={addTradeModal} onClose={() => setAddTradeModal(false)} onSave={handleAddTrade} defaultDate={addTradeDate} />
+
+      {/* Lightbox */}
+      <Lightbox open={lightbox.open} onClose={() => setLightbox({ ...lightbox, open: false })} images={lightbox.images} initialIndex={lightbox.index} />
     </div>
   );
 }
