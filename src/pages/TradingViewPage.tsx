@@ -311,7 +311,7 @@ export default function TradingViewPage() {
       )}
 
       {/* Chart with markers overlay — fixed height */}
-      <div className="relative flex-1 min-h-0" style={{ minHeight: 500 }}>
+      <div className="relative shrink-0" style={{ height: 'calc(100vh - 220px)', minHeight: 500 }}>
         <div
           ref={containerRef}
           style={{
