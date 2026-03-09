@@ -244,7 +244,7 @@ export default function TradingViewPage() {
     : `Trades registrados em ${currentPair || 'este par'} (${filteredPairTrades.length})`;
 
   return (
-    <div className="p-3 flex flex-col gap-3 h-[calc(100vh-16px)]">
+    <div className="p-3 flex flex-col gap-3 h-[calc(100vh-16px)] overflow-y-auto">
       {/* Header filters */}
       <div className="flex items-center gap-3 flex-wrap">
         <select value={symbol} onChange={e => setSymbol(e.target.value)} style={selectStyle}>
@@ -311,7 +311,7 @@ export default function TradingViewPage() {
       )}
 
       {/* Chart with markers overlay — fixed height */}
-      <div className="relative flex-1 min-h-0" style={{ minHeight: 500 }}>
+      <div className="relative shrink-0" style={{ height: 'calc(100vh - 220px)', minHeight: 500 }}>
         <div
           ref={containerRef}
           style={{
