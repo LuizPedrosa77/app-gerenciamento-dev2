@@ -244,7 +244,7 @@ export default function TradingViewPage() {
     : `Trades registrados em ${currentPair || 'este par'} (${filteredPairTrades.length})`;
 
   return (
-    <div className="p-3 flex flex-col gap-3 h-[calc(100vh-16px)]">
+    <div className="p-3 flex flex-col gap-3 h-[calc(100vh-16px)] overflow-y-auto">
       {/* Header filters */}
       <div className="flex items-center gap-3 flex-wrap">
         <select value={symbol} onChange={e => setSymbol(e.target.value)} style={selectStyle}>
