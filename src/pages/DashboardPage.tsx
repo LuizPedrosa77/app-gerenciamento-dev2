@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useGPFX } from '@/contexts/GPFXContext';
 import {
-  MONTHS, WEEKDAYS, sumPnl, fmtNum, getAccountBalance, getWinRate, getTradePnl, Trade, signedPnl, getWeekOfMonth, getMonthPnl,
+  MONTHS, WEEKDAYS, sumPnl, fmtNum, getAccountBalance, getWinRate, getTradePnl, Trade, getWeekOfMonth, getMonthPnl,
 } from '@/lib/gpfx-utils';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
