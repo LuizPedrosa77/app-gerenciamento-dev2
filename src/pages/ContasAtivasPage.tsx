@@ -184,21 +184,24 @@ export default function ContasAtivasPage({ onNavigatePlanilha }: ContasAtivasPro
          </p>
 
          {/* Platform badges */}
-         <div className="flex flex-wrap justify-center gap-2 mb-5">
-           {['MT5', 'MT4', 'cTrader', 'Tradovate', 'NinjaTrader'].map((platform) => (
-             <div
-               key={platform}
-               className="text-[9px] font-medium px-2 py-1 rounded-full"
-               style={{
-                 background: 'rgba(0,211,149,0.08)',
-                 border: '1px solid rgba(0,211,149,0.15)',
-                 color: '#00d395'
-               }}
-             >
-               {platform}
-             </div>
-           ))}
-         </div>
+          <div className="flex flex-wrap justify-center gap-2 mb-5">
+            {['MT5', 'MT4', 'cTrader', 'Tradovate', 'NinjaTrader'].map((platform) => (
+              <span
+                key={platform}
+                className="font-medium rounded-full"
+                style={{
+                  fontSize: 11,
+                  padding: '4px 10px',
+                  background: 'rgba(0,211,149,0.08)',
+                  border: '1px solid rgba(0,211,149,0.15)',
+                  borderRadius: 99,
+                  color: '#00d395'
+                }}
+              >
+                {platform}
+              </span>
+            ))}
+          </div>
          
          {/* Development badge */}
          <div 
