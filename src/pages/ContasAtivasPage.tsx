@@ -3,6 +3,7 @@ import { useGPFX } from '@/contexts/GPFXContext';
 import { Account, sumPnl, getMonthPnl, getAccountBalance, fmtNum, getTradePnl } from '@/lib/gpfx-utils';
 import { BarChart, Bar, ResponsiveContainer } from 'recharts';
 import { Target, Plug } from 'lucide-react';
+import { ConnectBrokerModal } from '@/components/ConnectBrokerModal';
 
 interface ContasAtivasProps {
   onNavigatePlanilha: (accountIndex: number) => void;
@@ -35,10 +36,12 @@ export default function ContasAtivasPage({ onNavigatePlanilha }: ContasAtivasPro
   const curMonth = now.getMonth();
   const [editingGoal, setEditingGoal] = useState<number | null>(null);
   const [goalValue, setGoalValue] = useState('');
+  const [brokerModal, setBrokerModal] = useState(false);
 
   return (
-    <div className="page-fade-in flex flex-col gap-5 max-w-[1400px] mx-auto p-6">
-      <h1 className="text-xl font-extrabold" style={{ color: 'var(--gpfx-text-primary)' }}>👛 Contas Ativas</h1>
+    <>
+      <div className="page-fade-in flex flex-col gap-5 max-w-[1400px] mx-auto p-6">
+        <h1 className="text-xl font-extrabold" style={{ color: 'var(--gpfx-text-primary)' }}>👛 Contas Ativas</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {state.accounts.map((acc, i) => {
@@ -154,6 +157,27 @@ export default function ContasAtivasPage({ onNavigatePlanilha }: ContasAtivasPro
             </div>
           );
         })}
+
+        {/* Connect Broker Card */}
+        <button
+          onClick={() => setBrokerModal(true)}
+          className="relative rounded-xl p-4 flex flex-col items-center justify-center gap-3 transition-all min-h-[200px] cursor-pointer group"
+          style={{
+            background: 'transparent',
+            border: '2px dashed rgba(0,211,149,0.25)',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'rgba(0,211,149,0.04)';
+            e.currentTarget.style.borderColor = 'rgba(0,211,149,0.5)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.borderColor = 'rgba(0,211,149,0.25)';
+          }}
+        >
+          <Plug size={32} style={{ color: '#00d395', opacity: 0.6 }} />
+          <span className="text-sm font-bold" style={{ color: '#00d395' }}>+ Conectar Nova Corretora</span>
+        </button>
        </div>
 
        {/* Divider */}
@@ -223,6 +247,8 @@ export default function ContasAtivasPage({ onNavigatePlanilha }: ContasAtivasPro
            </span>
          </div>
        </div>
-     </div>
-   );
+      </div>
+      <ConnectBrokerModal open={brokerModal} onClose={() => setBrokerModal(false)} />
+    </>
+  );
  }

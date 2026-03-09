@@ -4,7 +4,8 @@ import {
   MONTHS, YEARS, PAIRS, DIRECTIONS, RESULTS,
   sumPnl, fmtNum, signedPnl, uid, Trade,
 } from '@/lib/gpfx-utils';
-import { Download, Upload, Pencil, X, RefreshCw, AlertTriangle, Camera } from 'lucide-react';
+import { Download, Upload, Pencil, X, RefreshCw, AlertTriangle, Camera, Plug } from 'lucide-react';
+import { ConnectBrokerModal } from '@/components/ConnectBrokerModal';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Lightbox } from '@/components/Lightbox';
 import { ScreenshotModal } from '@/components/ScreenshotModal';
@@ -41,6 +42,7 @@ export default function PlanilhaPage() {
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; id: string }>({ open: false, id: '' });
   const [exportModal, setExportModal] = useState(false);
   const [mt5Modal, setMt5Modal] = useState(false);
+  const [brokerModal, setBrokerModal] = useState(false);
   const [exportAccMode, setExportAccMode] = useState('active');
   const [exportPeriod, setExportPeriod] = useState('all');
   const [mt5AccIdx, setMt5AccIdx] = useState(String(state.activeAccount));
@@ -418,6 +420,15 @@ export default function PlanilhaPage() {
               <option>WIN</option><option>LOSS</option>
             </select>
             <button className="btn-gpfx btn-gpfx-primary text-xs" onClick={() => addNewDay()}>+ Novo Dia</button>
+            <button
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+              style={{ border: '1px solid #00d395', color: '#00d395', background: 'transparent' }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,211,149,0.1)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+              onClick={() => setBrokerModal(true)}
+            >
+              <Plug size={14} /> Conectar Corretora
+            </button>
           </div>
         </div>
 
@@ -853,6 +864,7 @@ export default function PlanilhaPage() {
 
       {/* Lightbox */}
       <Lightbox open={lightbox.open} onClose={() => setLightbox({ ...lightbox, open: false })} images={lightbox.images} initialIndex={lightbox.index} />
+      <ConnectBrokerModal open={brokerModal} onClose={() => setBrokerModal(false)} />
     </div>
   );
 }
