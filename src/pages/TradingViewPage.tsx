@@ -274,41 +274,47 @@ export default function TradingViewPage() {
         </label>
       </div>
 
-      {/* Pair Stats Card */}
-      {pairStats.total > 0 && (
-        <div className="flex items-center gap-4 flex-wrap p-3 rounded-lg" style={{ background: '#161b22', border: '1px solid rgba(0,211,149,0.15)' }}>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold uppercase" style={{ color: '#6e7681' }}>Trades</span>
-            <span className="text-sm font-extrabold" style={{ color: '#e6edf3' }}>{pairStats.total}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold uppercase" style={{ color: '#6e7681' }}>Win Rate</span>
-            <span className="text-sm font-extrabold" style={{ color: '#f59e0b' }}>{pairStats.winRate}%</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold uppercase" style={{ color: '#6e7681' }}>P&L Total</span>
-            <span className="text-sm font-extrabold" style={{ color: pairStats.pnl >= 0 ? '#00d395' : '#ff4d4d' }}>
-              {pairStats.pnl >= 0 ? '+' : ''}${fmtNum(pairStats.pnl)}
+      {/* Stats Bar */}
+      <div
+        className="flex items-center gap-6 overflow-x-auto shrink-0"
+        style={{
+          background: 'rgba(0,211,149,0.04)',
+          borderBottom: '1px solid rgba(0,211,149,0.1)',
+          padding: '8px 16px',
+          scrollbarWidth: 'thin',
+        }}
+      >
+        <div className="flex flex-col whitespace-nowrap">
+          <span style={{ fontSize: 9, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', letterSpacing: 0.5 }}>TRADES</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0' }}>{pairStats.total}</span>
+        </div>
+        <div className="flex flex-col whitespace-nowrap">
+          <span style={{ fontSize: 9, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', letterSpacing: 0.5 }}>WIN RATE</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: '#00d395' }}>{pairStats.winRate}%</span>
+        </div>
+        <div className="flex flex-col whitespace-nowrap">
+          <span style={{ fontSize: 9, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', letterSpacing: 0.5 }}>P&L TOTAL</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: pairStats.pnl >= 0 ? '#00d395' : '#ff4d4d' }}>
+            {pairStats.pnl >= 0 ? '+' : ''}${fmtNum(pairStats.pnl)}
+          </span>
+        </div>
+        {pairStats.best && (
+          <div className="flex flex-col whitespace-nowrap">
+            <span style={{ fontSize: 9, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', letterSpacing: 0.5 }}>MELHOR</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#00d395' }}>
+              {pairStats.best.pair} {pairStats.best.date} +${fmtNum(getTradePnl(pairStats.best))}
             </span>
           </div>
-          {pairStats.best && (
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold uppercase" style={{ color: '#6e7681' }}>Melhor</span>
-              <span className="text-xs font-bold" style={{ color: '#00d395' }}>
-                {pairStats.best.pair} {pairStats.best.date} +${fmtNum(getTradePnl(pairStats.best))}
-              </span>
-            </div>
-          )}
-          {pairStats.worst && (
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold uppercase" style={{ color: '#6e7681' }}>Pior</span>
-              <span className="text-xs font-bold" style={{ color: '#ff4d4d' }}>
-                {pairStats.worst.pair} {pairStats.worst.date} {getTradePnl(pairStats.worst) >= 0 ? '+' : ''}${fmtNum(getTradePnl(pairStats.worst))}
-              </span>
-            </div>
-          )}
-        </div>
-      )}
+        )}
+        {pairStats.worst && (
+          <div className="flex flex-col whitespace-nowrap">
+            <span style={{ fontSize: 9, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', letterSpacing: 0.5 }}>PIOR</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: getTradePnl(pairStats.worst) < 0 ? '#ff4d4d' : '#00d395' }}>
+              {pairStats.worst.pair} {pairStats.worst.date} {getTradePnl(pairStats.worst) >= 0 ? '+' : ''}${fmtNum(getTradePnl(pairStats.worst))}
+            </span>
+          </div>
+        )}
+      </div>
 
       {/* Chart with markers overlay — fixed height */}
       <div className="relative shrink-0" style={{ height: 'calc(100vh - 220px)', minHeight: 500 }}>

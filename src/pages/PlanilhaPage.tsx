@@ -323,6 +323,9 @@ export default function PlanilhaPage() {
           <button className="btn-gpfx btn-gpfx-primary text-xs" onClick={() => { setMt5AccIdx(String(state.activeAccount)); setMt5Modal(true); }}>
             <Upload size={14} /> Importar MT5
           </button>
+          <button className="btn-gpfx btn-gpfx-primary text-xs" onClick={() => setBrokerModal(true)}>
+            <Plug size={14} /> Conectar Corretora
+          </button>
         </div>
       </div>
 
@@ -420,15 +423,6 @@ export default function PlanilhaPage() {
               <option>WIN</option><option>LOSS</option>
             </select>
             <button className="btn-gpfx btn-gpfx-primary text-xs" onClick={() => addNewDay()}>+ Novo Dia</button>
-            <button
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
-              style={{ border: '1px solid #00d395', color: '#00d395', background: 'transparent' }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,211,149,0.1)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              onClick={() => setBrokerModal(true)}
-            >
-              <Plug size={14} /> Conectar Corretora
-            </button>
           </div>
         </div>
 

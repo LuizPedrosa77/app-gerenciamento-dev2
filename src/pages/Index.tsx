@@ -11,6 +11,8 @@ import ContasAtivasPage from '@/pages/ContasAtivasPage';
 import TradingViewPage from '@/pages/TradingViewPage';
 import IADoTradePage from '@/pages/IADoTradePage';
 import APIsPage from '@/pages/APIsPage';
+import PerfilPage from '@/pages/PerfilPage';
+import AuthPage from '@/pages/AuthPage';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 function AppLayout() {
@@ -42,6 +44,7 @@ function AppLayout() {
       case 'analise': return <AnalisePage />;
       case 'ia': return <IADoTradePage />;
       case 'apis': return <APIsPage />;
+      case 'perfil': return <PerfilPage />;
       default: return <PlanilhaPage />;
     }
   };
@@ -71,6 +74,23 @@ function AppLayout() {
 }
 
 export default function Index() {
+  const [authenticated, setAuthenticated] = useState(() => {
+    return localStorage.getItem('gpfx_authenticated') === 'true';
+  });
+
+  const handleLogin = () => {
+    localStorage.setItem('gpfx_authenticated', 'true');
+    setAuthenticated(true);
+  };
+
+  if (!authenticated) {
+    return (
+      <ThemeProvider>
+        <AuthPage onLogin={handleLogin} />
+      </ThemeProvider>
+    );
+  }
+
   return (
     <ThemeProvider>
       <GPFXProvider>
