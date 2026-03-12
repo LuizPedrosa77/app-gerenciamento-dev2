@@ -1,16 +1,20 @@
-
 import { useState, useRef } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useToast } from '@/hooks/use-toast';
 import {
   UserCircle, Camera, Mail, Lock, Phone, MapPin, Globe, Calendar,
-  Copy, Share2, Eye, EyeOff, QrCode, Monitor, Smartphone, Trash2,
-  Crown, Check, Star, ExternalLink, Shield, Bell, Palette, Languages,
-  Clock, DollarSign, X
+  Copy, Eye, EyeOff, QrCode, Monitor, Smartphone, Trash2,
+  Crown, Check, Shield, Palette, Languages,
+  Clock, DollarSign, X, ChevronDown, ExternalLink, Music, Play, Facebook
 } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 // ─── Helpers ───
 const phoneMask = (v: string) => {
@@ -26,13 +30,24 @@ const passwordStrength = (p: string) => {
   return { label: 'Forte', pct: 100, color: '#00d395' };
 };
 
-// ─── Sub-components per tab ───
+// Social network config
+const socialNetworks = [
+  { id: 'twitter', name: 'X (Twitter)', icon: (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+  )},
+  { id: 'instagram', name: 'Instagram', icon: <Camera size={20} /> },
+  { id: 'tiktok', name: 'TikTok', icon: <Music size={20} /> },
+  { id: 'youtube', name: 'YouTube', icon: <Play size={20} /> },
+  { id: 'facebook', name: 'Facebook', icon: <Facebook size={20} /> },
+];
 
+// ─── Tab: Perfil ───
 function TabPerfil() {
   const { toast } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
   const [avatar, setAvatar] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [showLinks, setShowLinks] = useState(false);
   const [form, setForm] = useState({
     nome: 'Gustavo Pedrosa', email: 'gustavo@email.com', cpf: '123.456.789-00',
     telefone: '', nascimento: '', pais: 'Brasil', cidade: '',
@@ -49,6 +64,7 @@ function TabPerfil() {
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
+    if (!['image/jpeg', 'image/png'].includes(f.type)) { toast({ title: 'Formato inválido', description: 'Apenas JPG e PNG', variant: 'destructive' }); return; }
     if (f.size > 2 * 1024 * 1024) { toast({ title: 'Arquivo muito grande', description: 'Máximo 2MB', variant: 'destructive' }); return; }
     const r = new FileReader(); r.onload = () => setAvatar(r.result as string); r.readAsDataURL(f);
   };
@@ -82,8 +98,8 @@ function TabPerfil() {
       <div className="gpfx-card p-6 space-y-4">
         <h4 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--gpfx-text-muted)' }}>Dados Pessoais</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Nome Completo" value={form.nome} onChange={v => set('nome', v)} icon={<UserCircle size={14} />} />
-          <Field label="E-mail" value={form.email} onChange={v => set('email', v)} icon={<Mail size={14} />} />
+          <Field label="Nome Completo" value={form.nome} onChange={v => set('nome', v)} icon={<UserCircle size={14} />} required />
+          <Field label="E-mail" value={form.email} onChange={v => set('email', v)} icon={<Mail size={14} />} required />
           <Field label="CPF (não editável)" value={form.cpf} readOnly icon={<Shield size={14} />} />
           <Field label="Telefone" value={form.telefone} onChange={v => set('telefone', phoneMask(v))} icon={<Phone size={14} />} placeholder="(00) 00000-0000" />
           <Field label="Data de nascimento" value={form.nascimento} onChange={v => set('nascimento', v)} type="date" icon={<Calendar size={14} />} />
@@ -92,7 +108,7 @@ function TabPerfil() {
             <select value={form.pais} onChange={e => set('pais', e.target.value)}
               className="w-full h-10 rounded-lg px-3 text-sm outline-none"
               style={{ background: 'var(--gpfx-input-bg)', border: '1px solid var(--gpfx-border)', color: 'var(--gpfx-text-primary)' }}>
-              {['Brasil', 'Portugal', 'Estados Unidos', 'Reino Unido', 'Espanha', 'Outro'].map(p => <option key={p} value={p}>{p}</option>)}
+              {['Brasil', 'Portugal', 'Estados Unidos', 'Reino Unido', 'Espanha', 'Alemanha', 'França', 'Japão', 'Outro'].map(p => <option key={p} value={p}>{p}</option>)}
             </select>
           </div>
           <Field label="Cidade" value={form.cidade} onChange={v => set('cidade', v)} icon={<MapPin size={14} />} />
@@ -101,14 +117,82 @@ function TabPerfil() {
 
       {/* Redes Sociais */}
       <div className="gpfx-card p-6 space-y-4">
-        <h4 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--gpfx-text-muted)' }}>Redes Sociais</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Twitter / X" value={form.twitter} onChange={v => set('twitter', v)} placeholder="@seuusuario" icon={<span className="text-[12px] font-bold">𝕏</span>} />
-          <Field label="Instagram" value={form.instagram} onChange={v => set('instagram', v)} placeholder="@seuusuario" icon={<Camera size={14} />} />
-          <Field label="TikTok" value={form.tiktok} onChange={v => set('tiktok', v)} placeholder="@seuusuario" icon={<span className="text-[12px]">🎵</span>} />
-          <Field label="YouTube" value={form.youtube} onChange={v => set('youtube', v)} placeholder="youtube.com/c/seucanal" icon={<span className="text-[12px]">▶️</span>} />
-          <Field label="Facebook" value={form.facebook} onChange={v => set('facebook', v)} placeholder="facebook.com/seuperfil" icon={<UserCircle size={14} />} />
-        </div>
+        <h4 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--gpfx-text-muted)' }}>REDES SOCIAIS</h4>
+        <p className="text-xs" style={{ color: 'var(--gpfx-text-secondary)' }}>Clique para acessar seu perfil</p>
+
+        <TooltipProvider delayDuration={200}>
+          <div className="flex gap-3 flex-wrap">
+            {socialNetworks.map(sn => {
+              const url = form[sn.id as keyof typeof form];
+              return (
+                <Tooltip key={sn.id}>
+                  <TooltipTrigger asChild>
+                    <a
+                      href={url || '#'}
+                      target={url ? '_blank' : undefined}
+                      rel="noopener noreferrer"
+                      onClick={e => { if (!url) e.preventDefault(); }}
+                      className="flex items-center justify-center transition-all"
+                      style={{
+                        width: 44, height: 44,
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: 12,
+                        padding: 10,
+                        color: 'var(--gpfx-text-secondary)',
+                        cursor: url ? 'pointer' : 'default',
+                      }}
+                      onMouseEnter={e => {
+                        (e.currentTarget as HTMLElement).style.borderColor = '#00d395';
+                        (e.currentTarget as HTMLElement).style.background = 'rgba(0,211,149,0.1)';
+                        (e.currentTarget as HTMLElement).style.color = '#00d395';
+                      }}
+                      onMouseLeave={e => {
+                        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)';
+                        (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.05)';
+                        (e.currentTarget as HTMLElement).style.color = 'var(--gpfx-text-secondary)';
+                      }}
+                    >
+                      {sn.icon}
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent><span className="text-xs">{sn.name}</span></TooltipContent>
+                </Tooltip>
+              );
+            })}
+          </div>
+        </TooltipProvider>
+
+        <button
+          onClick={() => setShowLinks(!showLinks)}
+          className="flex items-center gap-1 text-xs font-medium transition-colors"
+          style={{ color: 'var(--gpfx-green)' }}
+        >
+          <ChevronDown size={14} className="transition-transform" style={{ transform: showLinks ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+          {showLinks ? 'Fechar links' : 'Editar links'}
+        </button>
+
+        {showLinks && (
+          <div className="space-y-3 pt-2">
+            {socialNetworks.map(sn => (
+              <Field
+                key={sn.id}
+                label={sn.name}
+                value={form[sn.id as keyof typeof form]}
+                onChange={v => set(sn.id, v)}
+                placeholder="Cole o link do seu perfil"
+                icon={<ExternalLink size={14} />}
+              />
+            ))}
+            <button
+              onClick={() => { setShowLinks(false); toast({ title: 'Links salvos!' }); }}
+              className="px-6 h-9 rounded-lg text-sm font-semibold"
+              style={{ background: 'var(--gpfx-green)', color: '#0d1117' }}
+            >
+              Salvar links
+            </button>
+          </div>
+        )}
       </div>
 
       <button onClick={handleSave} disabled={saving}
@@ -121,48 +205,103 @@ function TabPerfil() {
   );
 }
 
+// ─── Tab: Plano & Indicações ───
 function TabPlano() {
   const { toast } = useToast();
-  const [showUpgrade, setShowUpgrade] = useState(false);
+  const currentPlan = 'basico';
   const code = 'GPFX-GUSTAVO';
   const referrals = [
     { nome: 'João Silva', data: '05/03/2026', status: 'Ativo', desconto: '10%' },
     { nome: 'Maria Costa', data: '20/02/2026', status: 'Pendente', desconto: '—' },
+    { nome: 'Carlos Souza', data: '10/01/2026', status: 'Cancelado', desconto: '—' },
   ];
 
   const shareMsg = encodeURIComponent(`Use meu código ${code} e ganhe desconto no Gustavo Pedrosa FX! Acesse: fx.hubnexusai.com`);
-
   const copyCode = () => { navigator.clipboard.writeText(code); toast({ title: 'Código copiado!' }); };
+
+  const plans = [
+    {
+      id: 'basico', title: 'Plano Básico', price: 'R$49,90', period: '/mês',
+      features: ['Máximo 2 contas', 'Dashboard', 'Calendário', 'Trade Log', 'Contas Ativas'],
+    },
+    {
+      id: 'intermediario', title: 'Plano Intermediário', price: 'R$69,90', period: '/mês', popular: true,
+      features: ['Máximo 4 contas', 'Tudo do Básico', 'Evolução da Conta', 'TradingView Chart', 'Replay de Mercado'],
+    },
+    {
+      id: 'avancado', title: 'Plano Avançado', price: 'R$99,00', period: '/mês',
+      features: ['Máximo 10 contas', 'Tudo do Intermediário', 'Análise das Operações', 'IA do Trade', 'APIs & Automação'],
+    },
+  ];
 
   return (
     <div className="space-y-6">
       {/* Plano Atual */}
-      <div className="gpfx-card p-6 space-y-4">
+      <div className="gpfx-card p-6">
         <div className="flex items-center gap-3">
           <Crown size={24} style={{ color: 'var(--gpfx-green)' }} />
           <div>
             <h4 className="text-lg font-bold" style={{ color: 'var(--gpfx-text-primary)' }}>Plano Atual</h4>
-            <span className="inline-block px-3 py-1 rounded text-xs font-bold uppercase" style={{ background: 'rgba(0,211,149,0.15)', color: 'var(--gpfx-green)' }}>FREE</span>
+            <span className="inline-block px-3 py-1 rounded text-xs font-bold uppercase" style={{ background: 'rgba(0,211,149,0.15)', color: 'var(--gpfx-green)' }}>
+              {plans.find(p => p.id === currentPlan)?.title ?? 'Básico'}
+            </span>
           </div>
         </div>
-        <ul className="space-y-2 text-sm" style={{ color: 'var(--gpfx-text-secondary)' }}>
-          {['1 conta conectada', '100 trades/mês', 'Dashboard básico'].map(f => (
-            <li key={f} className="flex items-center gap-2"><Check size={14} style={{ color: 'var(--gpfx-green)' }} />{f}</li>
-          ))}
-        </ul>
-        <div className="space-y-1">
-          <div className="flex justify-between text-xs" style={{ color: 'var(--gpfx-text-muted)' }}><span>Trades usados</span><span>42 / 100</span></div>
-          <Progress value={42} className="h-2" />
-        </div>
-        <button onClick={() => setShowUpgrade(true)}
-          className="px-6 h-10 rounded-lg font-semibold text-sm" style={{ background: 'var(--gpfx-green)', color: '#0d1117' }}>
-          Fazer Upgrade
-        </button>
       </div>
 
-      {/* Cupom */}
+      {/* Plans grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {plans.map(plan => {
+          const isActive = plan.id === currentPlan;
+          const isUpgrade = plans.findIndex(p => p.id === plan.id) > plans.findIndex(p => p.id === currentPlan);
+          const isDowngrade = plans.findIndex(p => p.id === plan.id) < plans.findIndex(p => p.id === currentPlan);
+
+          return (
+            <div key={plan.id} className="relative p-5 rounded-xl space-y-4"
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: isActive ? '2px solid var(--gpfx-green)' : '1px solid var(--gpfx-border)',
+                boxShadow: isActive ? '0 0 20px rgba(0,211,149,0.1)' : 'none',
+              }}>
+              {plan.popular && (
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap"
+                  style={{ background: 'var(--gpfx-green)', color: '#0d1117' }}>
+                  Mais Popular
+                </span>
+              )}
+              <h5 className="text-base font-bold" style={{ color: 'var(--gpfx-text-primary)' }}>{plan.title}</h5>
+              <p className="text-2xl font-extrabold" style={{ color: isActive ? 'var(--gpfx-green)' : 'var(--gpfx-text-primary)' }}>
+                {plan.price}<span className="text-sm font-normal" style={{ color: 'var(--gpfx-text-muted)' }}>{plan.period}</span>
+              </p>
+              <ul className="space-y-2 text-sm" style={{ color: 'var(--gpfx-text-secondary)' }}>
+                {plan.features.map(f => (
+                  <li key={f} className="flex items-center gap-2"><Check size={14} style={{ color: 'var(--gpfx-green)' }} />{f}</li>
+                ))}
+              </ul>
+              {isActive ? (
+                <button className="w-full h-10 rounded-lg text-sm font-semibold cursor-default"
+                  style={{ background: 'rgba(0,211,149,0.15)', color: 'var(--gpfx-green)', border: '1px solid var(--gpfx-green)' }}>
+                  Plano Atual
+                </button>
+              ) : isUpgrade ? (
+                <button className="w-full h-10 rounded-lg text-sm font-semibold"
+                  style={{ background: 'var(--gpfx-green)', color: '#0d1117' }}>
+                  Assinar
+                </button>
+              ) : (
+                <button className="w-full h-10 rounded-lg text-sm font-semibold"
+                  style={{ color: 'var(--gpfx-text-muted)', border: '1px solid var(--gpfx-border)' }}>
+                  Fazer Downgrade
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Cupom de Indicação */}
       <div className="gpfx-card p-6 space-y-5">
-        <h4 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--gpfx-text-muted)' }}>Seu Código de Indicação</h4>
+        <h4 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--gpfx-text-muted)' }}>SEU CÓDIGO DE INDICAÇÃO</h4>
         <div className="flex items-center gap-3 p-3 rounded-lg" style={{ border: '1px solid var(--gpfx-green)', background: 'rgba(0,211,149,0.05)' }}>
           <code className="flex-1 text-lg font-mono font-bold" style={{ color: 'var(--gpfx-green)' }}>{code}</code>
           <button onClick={copyCode} className="p-2 rounded hover:opacity-80" style={{ color: 'var(--gpfx-green)' }}><Copy size={18} /></button>
@@ -172,21 +311,22 @@ function TabPlano() {
           <h5 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--gpfx-text-muted)' }}>Compartilhar</h5>
           <div className="flex gap-2 flex-wrap">
             <ShareBtn label="WhatsApp" bg="#25D366" href={`https://wa.me/?text=${shareMsg}`} />
-            <ShareBtn label="𝕏" bg="#000" href={`https://twitter.com/intent/tweet?text=${shareMsg}`} />
+            <ShareBtn label="𝕏 Twitter" bg="rgba(255,255,255,0.1)" textColor="var(--gpfx-text-secondary)" href={`https://twitter.com/intent/tweet?text=${shareMsg}`} />
             <ShareBtn label="Telegram" bg="#0088cc" href={`https://t.me/share/url?url=fx.hubnexusai.com&text=${shareMsg}`} />
             <button onClick={() => { navigator.clipboard.writeText(`fx.hubnexusai.com?ref=${code}`); toast({ title: 'Link copiado!' }); }}
-              className="px-3 h-8 rounded text-xs font-semibold flex items-center gap-1" style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--gpfx-text-secondary)' }}>
+              className="px-3 h-8 rounded text-xs font-semibold flex items-center gap-1"
+              style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--gpfx-text-secondary)' }}>
               <Copy size={12} /> Copiar link
             </button>
           </div>
         </div>
 
         <div>
-          <h5 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--gpfx-text-muted)' }}>Seu Desconto Atual</h5>
+          <h5 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--gpfx-text-muted)' }}>SEU DESCONTO ATUAL</h5>
           <Progress value={20} className="h-2 mb-2" />
           <p className="text-sm" style={{ color: 'var(--gpfx-text-secondary)' }}>2 indicações · 20% de desconto</p>
           <p className="text-xs mt-1" style={{ color: 'var(--gpfx-text-muted)' }}>
-            A cada indicação você ganha 10% de desconto na mensalidade. Máximo: 100% (10 indicações). Não acumulativo com outras promoções.
+            Cada indicação = 10% de desconto. Máximo 100% com 10 indicações. Não acumulativo com outras promoções.
           </p>
         </div>
 
@@ -201,10 +341,12 @@ function TabPlano() {
                 {referrals.map((r, i) => (
                   <tr key={i} style={{ color: 'var(--gpfx-text-secondary)', borderTop: '1px solid var(--gpfx-border)' }}>
                     <td className="py-2">{r.nome}</td><td className="py-2">{r.data}</td>
-                    <td className="py-2"><span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{
-                      background: r.status === 'Ativo' ? 'rgba(0,211,149,0.15)' : 'rgba(245,158,11,0.15)',
-                      color: r.status === 'Ativo' ? 'var(--gpfx-green)' : 'var(--gpfx-amber)',
-                    }}>{r.status}</span></td>
+                    <td className="py-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{
+                        background: r.status === 'Ativo' ? 'rgba(0,211,149,0.15)' : r.status === 'Pendente' ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)',
+                        color: r.status === 'Ativo' ? 'var(--gpfx-green)' : r.status === 'Pendente' ? 'var(--gpfx-amber)' : '#ff4d4d',
+                      }}>{r.status}</span>
+                    </td>
                     <td className="py-2">{r.desconto}</td>
                   </tr>
                 ))}
@@ -213,31 +355,16 @@ function TabPlano() {
           </div>
         </div>
       </div>
-
-      {/* Upgrade Modal */}
-      {showUpgrade && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
-          <div className="w-full max-w-2xl rounded-xl p-6 space-y-5" style={{ background: 'var(--gpfx-card)', border: '1px solid var(--gpfx-border)' }}>
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold" style={{ color: 'var(--gpfx-text-primary)' }}>Escolha seu plano</h3>
-              <button onClick={() => setShowUpgrade(false)} className="p-1 rounded hover:opacity-70"><X size={20} style={{ color: 'var(--gpfx-text-muted)' }} /></button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <PlanCard title="FREE" price="Grátis" features={['1 conta', '100 trades/mês', 'Sem IA do Trade']} />
-              <PlanCard title="PRO" price="R$ 49/mês" popular features={['Contas ilimitadas', 'Trades ilimitados', 'IA do Trade inclusa', 'Replay de mercado', 'Suporte prioritário']} />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
+// ─── Tab: Preferências ───
 function TabPreferencias() {
   const { theme, toggleTheme } = useTheme();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
-  const [prefs, setPrefs] = useState({ idioma: 'pt-BR', fuso: 'UTC-3', moeda: 'USD', relatorio: true, alertas: true, novidades: false, dicas: false });
+  const [prefs, setPrefs] = useState({ idioma: 'pt-BR', fuso: 'UTC-3', moeda: 'USD' });
 
   const handleSave = () => { setSaving(true); setTimeout(() => { setSaving(false); toast({ title: 'Preferências salvas!' }); }, 1000); };
 
@@ -251,16 +378,10 @@ function TabPreferencias() {
       <div className="gpfx-card p-6 space-y-4">
         <h4 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--gpfx-text-muted)' }}>Localização</h4>
         <SelectRow label="Idioma" icon={<Languages size={16} />} value={prefs.idioma} options={['pt-BR', 'en', 'es']} labels={['Português (BR)', 'English', 'Español']} onChange={v => setPrefs(p => ({ ...p, idioma: v }))} />
-        <SelectRow label="Fuso Horário" icon={<Clock size={16} />} value={prefs.fuso} options={['UTC-5', 'UTC-4', 'UTC-3', 'UTC-2', 'UTC-1', 'UTC+0', 'UTC+1']} onChange={v => setPrefs(p => ({ ...p, fuso: v }))} />
+        <SelectRow label="Fuso Horário" icon={<Clock size={16} />} value={prefs.fuso}
+          options={['UTC-12','UTC-11','UTC-10','UTC-9','UTC-8','UTC-7','UTC-6','UTC-5','UTC-4','UTC-3','UTC-2','UTC-1','UTC+0','UTC+1','UTC+2','UTC+3','UTC+4','UTC+5','UTC+6','UTC+7','UTC+8','UTC+9','UTC+10','UTC+11','UTC+12']}
+          onChange={v => setPrefs(p => ({ ...p, fuso: v }))} />
         <SelectRow label="Moeda Padrão" icon={<DollarSign size={16} />} value={prefs.moeda} options={['USD', 'BRL', 'EUR', 'GBP']} onChange={v => setPrefs(p => ({ ...p, moeda: v }))} />
-      </div>
-
-      <div className="gpfx-card p-6 space-y-4">
-        <h4 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--gpfx-text-muted)' }}>Notificações</h4>
-        <ToggleRow label="Relatório semanal por e-mail" icon={<Bell size={16} />} checked={prefs.relatorio} onChange={() => setPrefs(p => ({ ...p, relatorio: !p.relatorio }))} />
-        <ToggleRow label="Alertas de meta mensal atingida" icon={<Bell size={16} />} checked={prefs.alertas} onChange={() => setPrefs(p => ({ ...p, alertas: !p.alertas }))} />
-        <ToggleRow label="Novidades e atualizações" icon={<Bell size={16} />} checked={prefs.novidades} onChange={() => setPrefs(p => ({ ...p, novidades: !p.novidades }))} />
-        <ToggleRow label="Dicas e conteúdo educacional" icon={<Bell size={16} />} checked={prefs.dicas} onChange={() => setPrefs(p => ({ ...p, dicas: !p.dicas }))} />
       </div>
 
       <button onClick={handleSave} disabled={saving}
@@ -273,6 +394,7 @@ function TabPreferencias() {
   );
 }
 
+// ─── Tab: Segurança ───
 function TabSeguranca() {
   const { toast } = useToast();
   const [showPw, setShowPw] = useState({ current: false, new_: false, confirm: false });
@@ -306,7 +428,7 @@ function TabSeguranca() {
         </div>
         <PwField label="Confirmar Nova Senha" value={pw.confirm} onChange={v => setPw(p => ({ ...p, confirm: v }))} show={showPw.confirm} toggle={() => setShowPw(p => ({ ...p, confirm: !p.confirm }))} />
         <button onClick={() => toast({ title: 'Senha alterada!' })}
-          className="px-6 h-10 rounded-lg font-semibold text-sm" style={{ background: 'var(--gpfx-green)', color: '#0d1117' }}>
+          className="w-full md:w-auto px-6 h-10 rounded-lg font-semibold text-sm" style={{ background: 'var(--gpfx-green)', color: '#0d1117' }}>
           Alterar Senha
         </button>
       </div>
@@ -351,8 +473,9 @@ function TabSeguranca() {
       {/* Danger Zone */}
       <div className="p-6 rounded-xl space-y-3" style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.2)' }}>
         <h4 className="text-sm font-bold" style={{ color: '#ff4d4d' }}>Zona de Perigo</h4>
+        <p className="text-xs" style={{ color: 'var(--gpfx-text-muted)' }}>Esta ação é irreversível. Todos os seus dados serão excluídos permanentemente.</p>
         <button onClick={() => setShowDeleteModal(true)}
-          className="px-4 h-9 rounded-lg text-sm font-semibold" style={{ color: '#ff4d4d', border: '1px solid rgba(239,68,68,0.4)' }}>
+          className="w-full md:w-auto px-4 h-9 rounded-lg text-sm font-semibold" style={{ color: '#ff4d4d', border: '1px solid rgba(239,68,68,0.4)' }}>
           Excluir minha conta
         </button>
       </div>
@@ -377,13 +500,14 @@ function TabSeguranca() {
 }
 
 // ─── Reusable pieces ───
-
-function Field({ label, value, onChange, icon, placeholder, type = 'text', readOnly = false }: {
-  label: string; value: string; onChange?: (v: string) => void; icon?: React.ReactNode; placeholder?: string; type?: string; readOnly?: boolean;
+function Field({ label, value, onChange, icon, placeholder, type = 'text', readOnly = false, required = false }: {
+  label: string; value: string; onChange?: (v: string) => void; icon?: React.ReactNode; placeholder?: string; type?: string; readOnly?: boolean; required?: boolean;
 }) {
   return (
     <div>
-      <label className="text-[11px] font-semibold uppercase tracking-wider mb-1 block" style={{ color: readOnly ? 'rgba(255,255,255,0.3)' : 'var(--gpfx-text-muted)' }}>{label}</label>
+      <label className="text-[11px] font-semibold uppercase tracking-wider mb-1 block" style={{ color: readOnly ? 'rgba(255,255,255,0.3)' : 'var(--gpfx-text-muted)' }}>
+        {label}{required && <span style={{ color: 'var(--gpfx-red)' }}> *</span>}
+      </label>
       <div className="relative">
         {icon && <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--gpfx-text-muted)' }}>{icon}</span>}
         <input type={type} value={value} readOnly={readOnly} placeholder={placeholder}
@@ -442,31 +566,16 @@ function SelectRow({ label, icon, value, options, labels, onChange }: { label: s
   );
 }
 
-function ShareBtn({ label, bg, href }: { label: string; bg: string; href: string }) {
+function ShareBtn({ label, bg, href, textColor }: { label: string; bg: string; href: string; textColor?: string }) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer"
-      className="px-3 h-8 rounded text-xs font-semibold flex items-center gap-1 text-white" style={{ background: bg }}>
+      className="px-3 h-8 rounded text-xs font-semibold flex items-center gap-1" style={{ background: bg, color: textColor || '#fff' }}>
       {label}
     </a>
   );
 }
 
-function PlanCard({ title, price, features, popular }: { title: string; price: string; features: string[]; popular?: boolean }) {
-  return (
-    <div className="relative p-5 rounded-xl space-y-3" style={{ background: 'rgba(255,255,255,0.03)', border: popular ? '1px solid var(--gpfx-green)' : '1px solid var(--gpfx-border)' }}>
-      {popular && <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-bold" style={{ background: 'var(--gpfx-green)', color: '#0d1117' }}>Mais popular</span>}
-      <h5 className="text-lg font-bold" style={{ color: 'var(--gpfx-text-primary)' }}>{title}</h5>
-      <p className="text-2xl font-extrabold" style={{ color: popular ? 'var(--gpfx-green)' : 'var(--gpfx-text-primary)' }}>{price}</p>
-      <ul className="space-y-1.5 text-sm" style={{ color: 'var(--gpfx-text-secondary)' }}>
-        {features.map(f => <li key={f} className="flex items-center gap-2"><Check size={12} style={{ color: 'var(--gpfx-green)' }} />{f}</li>)}
-      </ul>
-      {popular && <button className="w-full h-10 rounded-lg font-semibold text-sm" style={{ background: 'var(--gpfx-green)', color: '#0d1117' }}>Assinar Pro</button>}
-    </div>
-  );
-}
-
 // ─── Main Page ───
-
 export default function PerfilPage() {
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState('perfil');
@@ -480,7 +589,6 @@ export default function PerfilPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <UserCircle size={28} style={{ color: 'var(--gpfx-green)' }} />
         <div>
@@ -489,7 +597,6 @@ export default function PerfilPage() {
         </div>
       </div>
 
-      {/* Tabs */}
       {isMobile ? (
         <select value={activeTab} onChange={e => setActiveTab(e.target.value)}
           className="w-full h-10 rounded-lg px-3 text-sm outline-none"
@@ -511,7 +618,6 @@ export default function PerfilPage() {
         </div>
       )}
 
-      {/* Tab content */}
       {activeTab === 'perfil' && <TabPerfil />}
       {activeTab === 'plano' && <TabPlano />}
       {activeTab === 'preferencias' && <TabPreferencias />}
